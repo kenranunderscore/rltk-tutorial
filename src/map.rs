@@ -1,5 +1,4 @@
 use rltk::{Rltk, RGB};
-use std::cmp::{max, min};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum TileType {

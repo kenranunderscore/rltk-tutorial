@@ -1,6 +1,5 @@
-use rltk::{GameState, Rltk, VirtualKeyCode, RGB};
+use rltk::{GameState, Rltk, RGB};
 use specs::prelude::*;
-use std::cmp::{max, min};
 
 mod map;
 pub use map::*;
@@ -8,8 +7,11 @@ pub use map::*;
 mod components;
 pub use components::*;
 
-struct State {
-    ecs: World,
+mod player;
+pub use player::*;
+
+pub struct State {
+    pub ecs: World,
 }
 
 impl GameState for State {
@@ -33,33 +35,6 @@ impl GameState for State {
 impl State {
     fn run_systems(&mut self) {
         self.ecs.maintain();
-    }
-}
-
-fn try_move_player(dx: i32, dy: i32, ecs: &mut World) {
-    let mut positions = ecs.write_storage::<Position>();
-    let mut players = ecs.write_storage::<Player>();
-    let map = ecs.fetch::<Vec<TileType>>();
-
-    for (_player, pos) in (&mut players, &mut positions).join() {
-        let dest_idx = xy_to_index(pos.x + dx, pos.y + dy);
-        if map[dest_idx] != TileType::Wall {
-            pos.x = min(79, max(0, pos.x + dx));
-            pos.y = min(49, max(0, pos.y + dy));
-        }
-    }
-}
-
-fn player_input(gs: &mut State, ctx: &mut Rltk) {
-    match ctx.key {
-        None => {}
-        Some(key) => match key {
-            VirtualKeyCode::Left => try_move_player(-1, 0, &mut gs.ecs),
-            VirtualKeyCode::Right => try_move_player(1, 0, &mut gs.ecs),
-            VirtualKeyCode::Up => try_move_player(0, -1, &mut gs.ecs),
-            VirtualKeyCode::Down => try_move_player(0, 1, &mut gs.ecs),
-            _ => {}
-        },
     }
 }
 
