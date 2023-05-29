@@ -1,26 +1,12 @@
 use rltk::{GameState, Rltk, VirtualKeyCode, RGB};
 use specs::prelude::*;
-use specs_derive::Component;
 use std::cmp::{max, min};
 
 mod map;
 pub use map::*;
 
-#[derive(Component)]
-struct Position {
-    x: i32,
-    y: i32,
-}
-
-#[derive(Component)]
-struct Renderable {
-    glyph: rltk::FontCharType,
-    fg: RGB,
-    bg: RGB,
-}
-
-#[derive(Component, Debug)]
-struct Player {}
+mod components;
+pub use components::*;
 
 struct State {
     ecs: World,
