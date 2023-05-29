@@ -10,6 +10,9 @@ pub use components::*;
 mod player;
 pub use player::*;
 
+mod rect;
+pub use rect::*;
+
 pub struct State {
     pub ecs: World,
 }
@@ -43,21 +46,26 @@ fn main() -> rltk::BError {
     let context = RltkBuilder::simple80x50()
         .with_title("Roguelike tutorial")
         .build()?;
+
     let mut gs = State { ecs: World::new() };
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<Player>();
+
+    let (rooms, map) = new_map_with_rooms_and_corridors();
+    gs.ecs.insert(map);
+    let (px, py) = rooms[0].center();
+
     gs.ecs
         .create_entity()
-        .with(Position { x: 40, y: 25 })
+        .with(Position { x: px, y: py })
         .with(Renderable {
             glyph: rltk::to_cp437('@'),
-            fg: RGB::named(rltk::YELLOW),
+            fg: RGB::named(rltk::RED),
             bg: RGB::named(rltk::BLACK),
         })
         .with(Player {})
         .build();
-    gs.ecs.insert(new_map_test());
 
     rltk::main_loop(context, gs)
 }
